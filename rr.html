@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Location Automatically</title>
+    <link rel="stylesheet" href="styles.css">  
+</head>
+<body>
+
+<h3>Select Language for Audio:</h3>
+<select id="languageSelect">
+    <option value="english">English</option>
+    <option value="hindi">Hindi</option>
+</select>
+
+<h2>Automatically Get Location and Address</h2>
+<button onclick="getLocation()">Get My Location</button>
+
+<p id="status">Click the button to get your location.</p>
+
+<h3>Address:</h3>
+<p id="address"></p>
+
+
+<h3>Playing Audio for Your Location:</h3>
+<audio id="audioPlayer" controls>
+    <source id="audioSource" src="" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio>
+
+<script>
+// Function to get user's current location
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        document.getElementById("status").innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+// Function to handle successful location retrieval
+function showPosition(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    
+    // Display the latitude and longitude
+    document.getElementById("status").innerHTML = `Latitude: ${latitude}, Longitude: ${longitude}`;
+
+    // Now, get the address from these coordinates using reverse geocoding
+    getAddress(latitude, longitude);
+}
+
+// Function to handle errors when retrieving the location
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            document.getElementById("status").innerHTML = "User denied the request for Geolocation.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            document.getElementById("status").innerHTML = "Location information is unavailable.";
+            break;
+        case error.TIMEOUT:
+            document.getElementById("status").innerHTML = "The request to get user location timed out.";
+            break;
+        case error.UNKNOWN_ERROR:
+            document.getElementById("status").innerHTML = "An unknown error occurred.";
+            break;
+    }
+}
+
+// Function to reverse geocode latitude and longitude to address using OpenStreetMap
+function getAddress(lat, lon) {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const address = data.display_name;
+            document.getElementById("address").innerHTML = address;
+
+            // Play the audio based on the address
+            playAudioBasedOnAddress(address);
+        })
+        .catch(error => {
+            console.log('Error:', error);
+            document.getElementById("address").innerHTML = "Unable to retrieve address.";
+        });
+}
+
+// Define audio files based on locations and language selection
+const locationAudioMap = {
+    "Char Minar": {
+        english: "1741763117320qn2kasti-voicemaker.in-speech.mp3",
+        hindi: "generated-audio.mp3"
+    },
+    "Taj Mahal, Agra": {
+        english: "tahmahaleng.mp3",
+        hindi: "generated-audio (2).mp3"
+    },
+    "Qutub Minar": {
+        english: "qutubminar.mp3",
+        hindi: "generated-audio (3).mp3"
+    },
+    "Red Fort": {
+        english: "redfort.mp3",
+        hindi: "generated-audio (4).mp3"
+    },
+    "Rajiv Gandhi Institute Of Technology": {
+        english: "rajav.mp3",
+        hindi: "generated-audio (5).mp3"
+    },
+    // Add more predefined locations here
+};
+
+// Function to play audio based on the address
+function playAudioBasedOnAddress(address) {
+    const audioPlayer = document.getElementById("audioPlayer");
+    const audioSource = document.getElementById("audioSource");
+
+    // Get the selected language
+    const selectedLanguage = document.getElementById("languageSelect").value;
+
+    // Default audio if no location matches
+    let audioFile = "audio/default.mp3";
+
+    // Check if the address matches one of the predefined locations
+    for (const location in locationAudioMap) {
+        if (address.includes(location)) {
+            // Set the audio file based on the location and language
+            audioFile = locationAudioMap[location][selectedLanguage] || audioFile;
+            break;
+        }
+    }
+
+    // Set the audio source and play it
+    audioSource.src = audioFile;
+    audioPlayer.load();
+    audioPlayer.play();
+}
+</script>
+
+</body>
+</html>
+

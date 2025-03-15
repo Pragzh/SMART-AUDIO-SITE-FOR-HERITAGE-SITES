@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location-Based Audio Guide</title>
+</head>
+<body>
+
+    <h3>Select Language:</h3>
+<select id="languageSelection">
+    <option value="english">English</option>
+    <option value="hindi">Hindi</option>
+</select>
+
+<h2>Get Location and Play Audio Guide</h2>
+<button onclick="getLocation()">Get My Location</button>
+
+<p id="status">Click the button to get your location.</p>
+
+<h3>Address:</h3>
+<p id="address"></p>
+
+
+
+<h3>Playing Audio for Your Location:</h3>
+<audio id="audioPlayer" controls>
+    <source id="audioSource" src="" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio>
+
+<script>
+// Function to get user's current location
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        document.getElementById("status").innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+// Function to handle successful location retrieval
+function showPosition(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    
+    // Display the latitude and longitude
+    document.getElementById("status").innerHTML = `Latitude: ${latitude}, Longitude: ${longitude}`;
+
+    // Now, get the address from these coordinates using reverse geocoding
+    getAddress(latitude, longitude);
+}
+
+// Function to handle errors when retrieving the location
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            document.getElementById("status").innerHTML = "User denied the request for Geolocation.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            document.getElementById("status").innerHTML = "Location information is unavailable.";
+            break;
+        case error.TIMEOUT:
+            document.getElementById("status").innerHTML = "The request to get user location timed out.";
+            break;
+        case error.UNKNOWN_ERROR:
+            document.getElementById("status").innerHTML = "An unknown error occurred.";
+            break;
+    }
+}
+
+// Function to reverse geocode latitude and longitude to address using OpenStreetMap
+function getAddress(lat, lon) {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const address = data.display_name;
+            document.getElementById("address").innerHTML = address;
+
+            // Play audio based on selected language
+            playAudio(address);
+        })
+        .catch(error => {
+            console.log('Error:', error);
+            document.getElementById("address").innerHTML = "Unable to retrieve address.";
+        });
+}
+
+// Function to play audio based on address and language selection
+function playAudio(address) {
+    const language = document.getElementById("languageSelection").value;
+    const audioSource = document.getElementById("audioSource");
+
+    // Choose audio file based on language and location
+    let audioFile = "";
+
+    // If the address contains "Char Minar", select audio based on the language
+    if (address.includes("Dahisar East")) {
+        if (language === "english") {
+            audioFile = "1741763117320qn2kasti-voicemaker.in-speech.mp3"; // Path to English audio file
+        } else if (language === "hindi") {
+            audioFile = "generated-audio.mp3"; // Path to Hindi audio file
+        }
+    } else {
+        audioFile = "audio/default.mp3"; // Default audio if address doesn't match
+    }
+
+    // Set the source and play the audio
+    audioSource.src = audioFile;
+    document.getElementById("audioPlayer").load();
+    document.getElementById("audioPlayer").play();
+}
+</script>
+
+</body>
+</html>

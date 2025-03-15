@@ -1,0 +1,107 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fc;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+h1, h2, h3 {
+    color: #2e3a59;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h3 {
+    margin-top: 30px;
+}
+
+/* Container for centralizing content */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Center the language selection dropdown */
+#languageSelect {
+    display: block;
+    margin: 20px auto;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+/* Styling for the button */
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px 32px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 20px auto;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Styling for paragraphs */
+p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Status text */
+#status {
+    font-size: 18px;
+    color: #555;
+}
+
+/* Audio player styling */
+audio {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* Address section */
+#address {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #2e3a59;
+    background-color: #f0f7ff;
+    padding: 10px;
+    border-radius: 5px;
+    word-wrap: break-word;
+}
+
+/* Footer style */
+footer {
+    margin-top: 40px;
+    text-align: center;
+    color: #555;
+}
